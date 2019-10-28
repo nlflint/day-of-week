@@ -25,12 +25,12 @@
 
 
 ; Leap year calculations
-(define leap-years-on-and-before-1752
+(define leap-year-count-on-and-before-1752
   (+ (/ 1752 4)
      (- 0 (floor (/ 1752 100)))
      (floor (/ 1752 400))))
 
-(check-equal? leap-years-on-and-before-1752 425)
+(check-equal? leap-year-count-on-and-before-1752 425)
 
 (define (divisible-by dividend divisor)
   (= 0 (remainder dividend divisor)))
@@ -45,7 +45,7 @@
      (- (if (and (is-leap-year year) (< month 3)) 1 0 ))
      (- 0 (floor (/ year 100)))
      (floor (/ year 400))
-     (- 0 leap-years-on-and-before-1752)))
+     (- 0 leap-year-count-on-and-before-1752)))
 
 
 (check-equal? (leap-day-count 1752 10) 0)
@@ -57,11 +57,12 @@
 (check-equal? (leap-day-count 1756 3) 1)
 
 ; Day calculations
+; anchor date is Jan 1 1752
 (define (day-of-week year month day)
   (let ([days-since-anchor (+
-                            (- day 1)
-                            (day-of-year-by-month month 0)
                             (* 365 (- year 1752))
+                            (day-of-year-by-month month 0)
+                            (- day 1)
                             (leap-day-count year month))])
     (+ 1 (remainder days-since-anchor 7))))
 
