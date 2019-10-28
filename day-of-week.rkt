@@ -36,23 +36,19 @@
   (= 0 (remainder dividend divisor)))
 
 (define (is-leap-year year)
-  (and (> year 1752)
-       (or (divisible-by year 400)
-          (and (divisible-by year 4)
-               (not (divisible-by year 100))))))
-
-(check-false (is-leap-year 1754))
-(check-true (is-leap-year 1756))
+  (or (divisible-by year 400)
+      (and (divisible-by year 4)
+           (not (divisible-by year 100)))))
 
 (define (leap-day-count year month)
   (+ (floor (/ year 4))
-     (- 0 leap-years-on-and-before-1752)
      (- (if (and (is-leap-year year) (< month 3)) 1 0 ))
      (- 0 (floor (/ year 100)))
-     (floor (/ year 400))))
+     (floor (/ year 400))
+     (- 0 leap-years-on-and-before-1752)))
 
-(check-equal? (leap-day-count 1752 1) 0)
-(check-equal? (leap-day-count 1752 5) 0)
+
+(check-equal? (leap-day-count 1752 10) 0)
 (check-equal? (leap-day-count 1753 1) 0)
 (check-equal? (leap-day-count 1754 1) 0)
 (check-equal? (leap-day-count 1755 1) 0)
