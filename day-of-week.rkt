@@ -16,7 +16,6 @@
     [10 (day-of-year-by-month (- month 1) (+ acc 30))]
     [11 (day-of-year-by-month (- month 1) (+ acc 31))]
     [12 (day-of-year-by-month (- month 1) (+ acc 30))]))
-
 (check-equal? (day-of-year-by-month 1 0) 0)
 (check-equal? (day-of-year-by-month 2 0) 31)
 (check-equal? (day-of-year-by-month 12 0) 334)
@@ -54,17 +53,6 @@
 (check-equal? (leap-day-count 1756 2) 0)
 (check-equal? (leap-day-count 1756 3) 1)
 
-; Day calculations
-; anchor date is Jan 1 1752
-(define (day-of-week year month day)
-  (let ([days-since-anchor (+
-                            (* 365 (- year 1752))
-                            (day-of-year-by-month month 0)
-                            (- day 1)
-                            (leap-day-count year month))])
-    (+ 1 (remainder days-since-anchor 7))))
-
-; define some days
 (define Sunday 1)
 (define Monday 2)
 (define Tuesday 3)
@@ -73,46 +61,68 @@
 (define Friday 6)
 (define Saturday 7)
 
+(define (to-day day-ordinal)
+  (list-ref `(Sunday Monday Tuesday Wednesday Thursday Friday Saturday)
+            (- day-ordinal 1)))
+
+; Day calculations
+; anchor date is Jan 1 1752
+(define (day-of-week year month day)
+  (let ([days-since-anchor (+
+                            (* 365 (- year 1752))
+                            (day-of-year-by-month month 0)
+                            (- day 1)
+                            (leap-day-count year month))])
+    (to-day (+ 1 (remainder days-since-anchor 7)))))
+
+; define some days
+
+
 ;handle by day
-(check-equal? (day-of-week 1752 9 14) Thursday)
-(check-equal? (day-of-week 1752 9 24) Sunday)
-(check-equal? (day-of-week 1752 9 30) Saturday)
-(check-equal? (day-of-week 1752 10 1) Sunday)
-(check-equal? (day-of-week 1752 10 7) Saturday)
+(check-equal? (day-of-week 1752 9 14) `Thursday)
+(check-equal? (day-of-week 1752 9 24) `Sunday)
+(check-equal? (day-of-week 1752 9 30) `Saturday)
+(check-equal? (day-of-week 1752 10 1) `Sunday)
+(check-equal? (day-of-week 1752 10 7) `Saturday)
 
 ;handle after first week
-(check-equal? (day-of-week 1752 10 8) Sunday)
-(check-equal? (day-of-week 1752 10 31) Tuesday)
+(check-equal? (day-of-week 1752 10 8) `Sunday)
+(check-equal? (day-of-week 1752 10 31) `Tuesday)
 
 ;handle after month
-(check-equal? (day-of-week 1752 11 1) Wednesday)
-(check-equal? (day-of-week 1752 12 31) Sunday)
+(check-equal? (day-of-week 1752 11 1) `Wednesday)
+(check-equal? (day-of-week 1752 12 31) `Sunday)
 
 ;handle after first year
-(check-equal? (day-of-week 1753 1 1) Monday)
-(check-equal? (day-of-week 1753 7 28) Saturday)
-(check-equal? (day-of-week 1754 9 13) Friday)
-(check-equal? (day-of-week 1755 10 10) Friday)
-(check-equal? (day-of-week 1756 2 28) Saturday)
-(check-equal? (day-of-week 1756 2 29) Sunday)
+(check-equal? (day-of-week 1753 1 1) `Monday)
+(check-equal? (day-of-week 1753 7 28) `Saturday)
+(check-equal? (day-of-week 1754 9 13) `Friday)
+(check-equal? (day-of-week 1755 10 10) `Friday)
+(check-equal? (day-of-week 1756 2 28) `Saturday)
+(check-equal? (day-of-week 1756 2 29) `Sunday)
 
 ;handle leap year every 4 years
-(check-equal? (day-of-week 1756 3 1) Monday)
-(check-equal? (day-of-week 1775 1 3) Tuesday)
-(check-equal? (day-of-week 1798 12 12) Wednesday)
-(check-equal? (day-of-week 1799 12 31) Tuesday)
-(check-equal? (day-of-week 1800 1 1) Wednesday)
-(check-equal? (day-of-week 1800 2 28) Friday)
+(check-equal? (day-of-week 1756 3 1) `Monday)
+(check-equal? (day-of-week 1775 1 3) `Tuesday)
+(check-equal? (day-of-week 1798 12 12) `Wednesday)
+(check-equal? (day-of-week 1799 12 31) `Tuesday)
+(check-equal? (day-of-week 1800 1 1) `Wednesday)
+(check-equal? (day-of-week 1800 2 28) `Friday)
 
 ;handle not leap year every 100 years
-(check-equal? (day-of-week 1800 3 1) Saturday)
-(check-equal? (day-of-week 1900 12 31) Monday)
-(check-equal? (day-of-week 2000 2 28) Monday)
+(check-equal? (day-of-week 1800 3 1) `Saturday)
+(check-equal? (day-of-week 1900 12 31) `Monday)
+(check-equal? (day-of-week 2000 2 28) `Monday)
 
 ;is leap year when divisible by 400
-(check-equal? (day-of-week 2000 2 28) Monday)
-(check-equal? (day-of-week 2000 3 1) Wednesday)
-(check-equal? (day-of-week 2019 10 28) Monday)
-(check-equal? (day-of-week 3568 5 12) Sunday)
+(check-equal? (day-of-week 2000 2 28) `Monday)
+(check-equal? (day-of-week 2000 3 1) `Wednesday)
+(check-equal? (day-of-week 2019 10 28) `Monday)
+(check-equal? (day-of-week 3568 5 12) `Sunday)
 
-
+`(My birth: ,(day-of-week 1981 3 2))
+`(Jens birth: ,(day-of-week 1981 5 18))
+`(Lillian: ,(day-of-week 2015 10 16))
+`(Evelyn: ,(day-of-week 2018 10 25))
+`(Abe Lincoln: ,(day-of-week 1809 2 12))
+`(Jean Luc Picard: ,(day-of-week 2305 7 13))
