@@ -26,7 +26,8 @@
 (define (day-of-week year month day)
   (let ([days-since-anchor (+
                             (- day 1)
-                            (day-of-year-by-month month 0))])
+                            (day-of-year-by-month month 0)
+                            (* 365 (- year 1752)))])
     (+ 1 (remainder days-since-anchor 7))))
 
 
@@ -43,4 +44,8 @@
 (check-equal? (day-of-week 1752 11 1) 4)
 (check-equal? (day-of-week 1752 12 31) 1)
 
-
+;handle after first year
+(check-equal? (day-of-week 1753 1 1) 2)
+(check-equal? (day-of-week 1753 7 28) 7)
+(check-equal? (day-of-week 1754 9 13) 6)
+(check-equal? (day-of-week 1755 10 10) 6)
