@@ -26,17 +26,22 @@
 
 ; Leap year calculations
 (define leap-years-on-and-before-1752
-  (/ 1752 4))
+  (- (/ 1752 4)
+     (floor (/ 1752 100))))
+
+(check-equal? leap-years-on-and-before-1752 421)
 
 (define (is-leap-year year)
   (and
    (= 0 (remainder year 4))
-   (> year 1752)))
+   (> year 1752)
+   (not (= 0 (remainder year 100)))))
 
 (define (leap-day-count year month)
   (+ (floor (/ year 4))
      (- 0 leap-years-on-and-before-1752)
-     (- (if (and (is-leap-year year) (< month 3)) 1 0 ))))
+     (- (if (and (is-leap-year year) (< month 3)) 1 0 ))
+     (- 0 (floor (/ year 100)))))
 
 (check-equal? (leap-day-count 1752 1) 0)
 (check-equal? (leap-day-count 1752 5) 0)
@@ -81,10 +86,15 @@
 (check-equal? (day-of-week 1756 2 28) 7)
 (check-equal? (day-of-week 1756 2 29) 1)
 
-;handle a leap year
+;handle leap year every 4 years
 (check-equal? (day-of-week 1756 3 1) 2)
 (check-equal? (day-of-week 1775 1 3) 3)
 (check-equal? (day-of-week 1798 12 12) 4)
 (check-equal? (day-of-week 1799 12 31) 3)
 (check-equal? (day-of-week 1800 1 1) 4)
 (check-equal? (day-of-week 1800 2 28) 6)
+
+;handle not leap year every 100 years
+(check-equal? (day-of-week 1800 3 1) 7)
+(check-equal? (day-of-week 1900 12 31) 2)
+(check-equal? (day-of-week 2000 2 28) 2)
