@@ -2,23 +2,24 @@
 (require rackunit)
 
 ; Month calculations
-(define (day-of-year-by-month month acc)
-  (match month
-    [1 acc]
-    [2 (day-of-year-by-month (- month 1) (+ acc 31))]
-    [3 (day-of-year-by-month (- month 1) (+ acc 28))]
-    [4 (day-of-year-by-month (- month 1) (+ acc 31))]
-    [5 (day-of-year-by-month (- month 1) (+ acc 30))]
-    [6 (day-of-year-by-month (- month 1) (+ acc 31))]
-    [7 (day-of-year-by-month (- month 1) (+ acc 30))]
-    [8 (day-of-year-by-month (- month 1) (+ acc 31))]
-    [9 (day-of-year-by-month (- month 1) (+ acc 31))]
-    [10 (day-of-year-by-month (- month 1) (+ acc 30))]
-    [11 (day-of-year-by-month (- month 1) (+ acc 31))]
-    [12 (day-of-year-by-month (- month 1) (+ acc 30))]))
-(check-equal? (day-of-year-by-month 1 0) 0)
-(check-equal? (day-of-year-by-month 2 0) 31)
-(check-equal? (day-of-year-by-month 12 0) 334)
+(define January 31)
+(define February 28)
+(define March 31)
+(define April 30)
+(define May 31)
+(define June 30)
+(define July 31)
+(define August 31)
+(define September 30)
+(define October 31)
+(define November 30)
+
+(define (day-of-year-by-month month)
+  (apply + (take (list January February March April May June July August September October November) (- month 1))))
+
+(check-equal? (day-of-year-by-month 1) 0)
+(check-equal? (day-of-year-by-month 2) 31)
+(check-equal? (day-of-year-by-month 12) 334)
 
 
 ; Leap year calculations
@@ -70,7 +71,7 @@
 (define (day-of-week year month day)
   (let ([days-since-anchor (+
                             (* 365 (- year 1752))
-                            (day-of-year-by-month month 0)
+                            (day-of-year-by-month month)
                             (- day 1)
                             (leap-day-count year month))])
     (to-day (+ 1 (remainder days-since-anchor 7)))))
